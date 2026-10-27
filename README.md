@@ -9,3 +9,17 @@ Install the latest [heart.8 APK](https://github.com/LXRylex/HyperDuo-Extended/re
 The heart fills from the bottom according to battery level. Settings include normal, charging, low and full colors; a charging wave; percentage inside or beside the heart; automatic outline tint; and matching status-bar and HyperOS shade header colors. Default, Ring and Capsule styles are retained.
 
 Tested on a Redmi Note 13 Pro 4G (emerald), HyperOS `OS3.0.305.0.WNFMIXM`, Android 16, with a libxposed API 102 loader. SystemUI classes vary by ROM; other devices may behave differently.
+
+<table border="0">
+  <tr>
+    <td valign="top" width="50%">
+      <!-- Your Static Image (Shorter height, full width, no distortion) -->
+      <img src="https://github.com/user-attachments/assets/ffb3f88d-735d-499b-a53c-97f44f3d9006" width="90%" style="height: 850px; object-fit: cover;" alt="image" />
+    </td>
+    <td valign="top" width="50%">
+      <!-- Your Animated GIF -->
+      <img src="https://github.com/user-attachments/assets/6fbf6969-0b34-4e47-8834-a82b13329e12" width="100%" alt="179314367216419154015387767243" />
+    </td>
+  </tr>
+</table>
+
