@@ -334,6 +334,11 @@ final class TrioRenderer {
         // layout methods below read positions off it instead of re-deriving the
         // switches themselves, which is what used to let the two arrangements
         // drift apart - and let the documentation drift from both.
+        if (cfg.trioStyle == Prefs.STYLE_DEFAULT) return;
+        if (cfg.trioStyle == Prefs.STYLE_HEART) {
+            HeartBatteryRenderer.draw(canvas,w,h,level,charging,fg,cfg,clearWhenDone);
+            return;
+        }
         final TrioAppearance appearance = TrioAppearance.of(cfg);
         // The network type is NOT suppressed here any more.
         //

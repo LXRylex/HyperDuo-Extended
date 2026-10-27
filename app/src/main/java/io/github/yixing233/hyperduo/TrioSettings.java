@@ -29,6 +29,16 @@ import android.os.Bundle;
 public final class TrioSettings {
 
     public boolean enabled;
+    public int heartNormal;
+    public int heartCharging;
+    public int heartLow;
+    public int heartFull;
+    public boolean heartPercentage;
+    public boolean heartPercentageRight;
+    public boolean heartStatusTint;
+    public boolean heartAnimation;
+    public boolean heartAutoTint;
+
     public boolean showWifi;
     public boolean showMobile;
     public boolean showValue;
@@ -259,7 +269,8 @@ public final class TrioSettings {
      * view away entirely, and turning either on brings back the same view with
      * only the requested segment drawn.
      */
-    public boolean perfTemp;
+    public boolean perfTemp;
+
     /** Drops the temperature unless charging; see {@link Prefs#KEY_PERF_TEMP_CHARGING_ONLY}. */
     public boolean perfTempChargingOnly;
 
@@ -303,6 +314,15 @@ public final class TrioSettings {
     public static TrioSettings defaults() {
         TrioSettings s = new TrioSettings();
         s.enabled = Prefs.DEF_ENABLED;
+        s.heartNormal = Prefs.DEF_HEART_NORMAL;
+        s.heartCharging = Prefs.DEF_HEART_CHARGING;
+        s.heartLow = Prefs.DEF_HEART_LOW;
+        s.heartFull = Prefs.DEF_HEART_FULL;
+        s.heartPercentage = Prefs.DEF_HEART_PERCENTAGE;
+        s.heartPercentageRight = Prefs.DEF_HEART_PERCENTAGE_RIGHT;
+        s.heartStatusTint = Prefs.DEF_HEART_STATUS_TINT;
+        s.heartAnimation = Prefs.DEF_HEART_ANIMATION;
+        s.heartAutoTint = Prefs.DEF_HEART_AUTO_TINT;
         s.showWifi = Prefs.DEF_SHOW_WIFI;
         s.showMobile = Prefs.DEF_SHOW_MOBILE;
         s.showValue = Prefs.DEF_SHOW_VALUE;
@@ -405,6 +425,15 @@ public final class TrioSettings {
     public static TrioSettings from(SharedPreferences p, float density, int styleOverride) {
         TrioSettings s = new TrioSettings();
         s.enabled = p.getBoolean(Prefs.KEY_ENABLED, Prefs.DEF_ENABLED);
+        s.heartNormal = p.getInt(Prefs.KEY_HEART_NORMAL, Prefs.DEF_HEART_NORMAL);
+        s.heartCharging = p.getInt(Prefs.KEY_HEART_CHARGING, Prefs.DEF_HEART_CHARGING);
+        s.heartLow = p.getInt(Prefs.KEY_HEART_LOW, Prefs.DEF_HEART_LOW);
+        s.heartFull = p.getInt(Prefs.KEY_HEART_FULL, Prefs.DEF_HEART_FULL);
+        s.heartPercentage = p.getBoolean(Prefs.KEY_HEART_PERCENTAGE, Prefs.DEF_HEART_PERCENTAGE);
+        s.heartPercentageRight = p.getBoolean(Prefs.KEY_HEART_PERCENTAGE_RIGHT, Prefs.DEF_HEART_PERCENTAGE_RIGHT);
+        s.heartStatusTint = p.getBoolean(Prefs.KEY_HEART_STATUS_TINT, Prefs.DEF_HEART_STATUS_TINT);
+        s.heartAnimation = p.getBoolean(Prefs.KEY_HEART_ANIMATION, Prefs.DEF_HEART_ANIMATION);
+        s.heartAutoTint = p.getBoolean(Prefs.KEY_HEART_AUTO_TINT, Prefs.DEF_HEART_AUTO_TINT);
         // The style first: the component switches below are stored per arrangement, so
         // which key to read depends on it.
         s.navStyle = Prefs.normalizeNavStyle(p.getInt(Prefs.KEY_NAV_STYLE, Prefs.DEF_NAV_STYLE));
@@ -828,6 +857,15 @@ public final class TrioSettings {
     public TrioSettings copy() {
         TrioSettings s = new TrioSettings();
         s.enabled = enabled;
+        s.heartNormal = heartNormal;
+        s.heartCharging = heartCharging;
+        s.heartLow = heartLow;
+        s.heartFull = heartFull;
+        s.heartPercentage = heartPercentage;
+        s.heartPercentageRight = heartPercentageRight;
+        s.heartStatusTint = heartStatusTint;
+        s.heartAnimation = heartAnimation;
+        s.heartAutoTint = heartAutoTint;
         s.showWifi = showWifi;
         s.showMobile = showMobile;
         s.showValue = showValue;
@@ -917,6 +955,16 @@ public final class TrioSettings {
             key = Prefs.styledBase(key);
         }
         switch (key) {
+            case Prefs.KEY_HEART_NORMAL: heartNormal = src.heartNormal; return true;
+            case Prefs.KEY_HEART_CHARGING: heartCharging = src.heartCharging; return true;
+            case Prefs.KEY_HEART_LOW: heartLow = src.heartLow; return true;
+            case Prefs.KEY_HEART_FULL: heartFull = src.heartFull; return true;
+            case Prefs.KEY_HEART_PERCENTAGE: heartPercentage = src.heartPercentage; return true;
+            case Prefs.KEY_HEART_PERCENTAGE_RIGHT: heartPercentageRight = src.heartPercentageRight; return true;
+            case Prefs.KEY_HEART_STATUS_TINT: heartStatusTint = src.heartStatusTint; return true;
+            case Prefs.KEY_HEART_ANIMATION: heartAnimation = src.heartAnimation; return true;
+            case Prefs.KEY_HEART_AUTO_TINT: heartAutoTint = src.heartAutoTint; return true;
+
             case Prefs.KEY_ENABLED: enabled = src.enabled; return true;
             case Prefs.KEY_SHOW_WIFI: showWifi = src.showWifi; return true;
             case Prefs.KEY_SHOW_MOBILE: showMobile = src.showMobile; return true;
@@ -997,6 +1045,15 @@ public final class TrioSettings {
             return defaults();
         }
         s.enabled = bundle.getBoolean(Prefs.KEY_ENABLED, Prefs.DEF_ENABLED);
+        s.heartNormal = bundle.getInt(Prefs.KEY_HEART_NORMAL, Prefs.DEF_HEART_NORMAL);
+        s.heartCharging = bundle.getInt(Prefs.KEY_HEART_CHARGING, Prefs.DEF_HEART_CHARGING);
+        s.heartLow = bundle.getInt(Prefs.KEY_HEART_LOW, Prefs.DEF_HEART_LOW);
+        s.heartFull = bundle.getInt(Prefs.KEY_HEART_FULL, Prefs.DEF_HEART_FULL);
+        s.heartPercentage = bundle.getBoolean(Prefs.KEY_HEART_PERCENTAGE, Prefs.DEF_HEART_PERCENTAGE);
+        s.heartPercentageRight = bundle.getBoolean(Prefs.KEY_HEART_PERCENTAGE_RIGHT, Prefs.DEF_HEART_PERCENTAGE_RIGHT);
+        s.heartStatusTint = bundle.getBoolean(Prefs.KEY_HEART_STATUS_TINT, Prefs.DEF_HEART_STATUS_TINT);
+        s.heartAnimation = bundle.getBoolean(Prefs.KEY_HEART_ANIMATION, Prefs.DEF_HEART_ANIMATION);
+        s.heartAutoTint = bundle.getBoolean(Prefs.KEY_HEART_AUTO_TINT, Prefs.DEF_HEART_AUTO_TINT);
         // The style first, for the same reason as the stored read: the component switches below
         // are per arrangement.
         s.navStyle = Prefs.normalizeNavStyle(bundle.getInt(Prefs.KEY_NAV_STYLE, Prefs.DEF_NAV_STYLE));
@@ -1160,6 +1217,16 @@ public final class TrioSettings {
      */
     public Bundle toBundle() {
         Bundle b = new Bundle();
+        b.putInt(Prefs.KEY_HEART_NORMAL, heartNormal);
+        b.putInt(Prefs.KEY_HEART_CHARGING, heartCharging);
+        b.putInt(Prefs.KEY_HEART_LOW, heartLow);
+        b.putInt(Prefs.KEY_HEART_FULL, heartFull);
+        b.putBoolean(Prefs.KEY_HEART_PERCENTAGE, heartPercentage);
+        b.putBoolean(Prefs.KEY_HEART_PERCENTAGE_RIGHT, heartPercentageRight);
+        b.putBoolean(Prefs.KEY_HEART_STATUS_TINT, heartStatusTint);
+        b.putBoolean(Prefs.KEY_HEART_ANIMATION, heartAnimation);
+        b.putBoolean(Prefs.KEY_HEART_AUTO_TINT, heartAutoTint);
+
         // The style first: the component switches below are written under the CURRENT
         // arrangement's key, so the hooked process has to be able to pick them out.
         b.putInt(Prefs.KEY_NAV_STYLE, Prefs.normalizeNavStyle(navStyle));
@@ -1235,7 +1302,8 @@ public final class TrioSettings {
      * {@code TrioConfig}, which must not notify the listeners (and re-fold every
      * container) when the delayed read saw the same values the first one did -
      * but a full comparison is also what a snapshot type ought to answer.
-     */
+     */
+
     /**
      * Normalises a stored font path to a non-null string.
      *
@@ -1257,7 +1325,16 @@ public final class TrioSettings {
             return false;
         }
         final TrioSettings s = (TrioSettings) o;
-        return enabled == s.enabled
+        return heartNormal == s.heartNormal
+                && heartCharging == s.heartCharging
+                && heartLow == s.heartLow
+                && heartFull == s.heartFull
+                && heartPercentage == s.heartPercentage
+                && heartPercentageRight == s.heartPercentageRight
+                && heartStatusTint == s.heartStatusTint
+                && heartAnimation == s.heartAnimation
+                && heartAutoTint == s.heartAutoTint
+                && enabled == s.enabled
                 && showWifi == s.showWifi
                 && showMobile == s.showMobile
                 && showValue == s.showValue

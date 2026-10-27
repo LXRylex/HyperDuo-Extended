@@ -30,21 +30,9 @@ android {
         versionName = tagVersionName ?: "1.1"
     }
 
-    signingConfigs {
-        // Same keystore the hand-rolled pipeline used, so that in-place updates
-        // over the already-installed module keep working.
-        create("hyperduo") {
-            storeFile = rootProject.file(".tools/debug.keystore")
-            storePassword = "android"
-            keyAlias = "hyperduo"
-            keyPassword = "android"
-        }
-    }
-
     buildTypes {
         debug {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("hyperduo")
         }
         release {
             isMinifyEnabled = true
@@ -53,7 +41,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            signingConfig = signingConfigs.getByName("hyperduo")
         }
     }
 

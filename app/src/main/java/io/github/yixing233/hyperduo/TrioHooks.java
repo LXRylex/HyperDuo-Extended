@@ -116,6 +116,8 @@ final class TrioHooks {
 
     /** Module handle for logging from helpers that have no callback argument. */
     private static volatile XposedModule sModule;
+    private static boolean sHeartFrameLogged;
+    private static boolean sHooksInstalled;
 
     /**
      * Every slot the module knows how to fold, one group per sub-toggle.
@@ -365,7 +367,16 @@ final class TrioHooks {
 
     // ------------------------------------------------------------------ install
 
-    static void install(XposedModule module, ClassLoader cl) {
+    static synchronized void install(XposedModule module, ClassLoader cl) {
+        // HyperOS dispatches package-ready for its main loader and later plugin loaders.
+        // A plugin without the battery class cannot invalidate already installed hooks.
+        if (sHooksInstalled) return;
+        Class<?> batteryHost=Refl.cls("com.android.systemui.statusbar.views.MiuiBatteryMeterIconView",cl);
+        if (batteryHost == null || Refl.method(batteryHost,"onDraw",Canvas.class) == null
+                || Refl.field(batteryHost,"mLevel") == null) {
+            log(module,"Skipping package-ready loader without the Xiaomi battery host");
+            return;
+        }
         sModule = module;
         // Read the user's settings before anything is hooked: the very first hook
         // callback already needs to know whether the module is switched on.
@@ -376,6 +387,7 @@ final class TrioHooks {
                 applyConfigChange();
             }
         });
+        log(LOG_INFO,"Battery host verified, Android SDK " + android.os.Build.VERSION.SDK_INT);
         int hooked = 0;
         hooked += group(module, cl, 1);
         hooked += group(module, cl, 2);
@@ -391,6 +403,8 @@ final class TrioHooks {
         hooked += group(module, cl, 12);
         hooked += group(module, cl, 13);
         hooked += group(module, cl, 14);
+        StatusBarTintHooks.install(module,cl);
+        sHooksInstalled = true;
         log(module, "HyperDuo installed, hooks=" + hooked
                 + " enabled=" + TrioConfig.get().enabled);
     }
@@ -616,6 +630,13 @@ final class TrioHooks {
                 @Override
                 public void run() {
                     final TrioAppearance a = TrioConfig.appearance();
+                    if (!a.glyph) {
+                        // Default, disable, and Heart failure recovery all restore the real
+                        // native style. Do not force the module's bolt/icon visibility here.
+                        reapplyStyle(meter);
+                        Refl.invoke(sUpdateChargeAndTextField, meter);
+                        return;
+                    }
                     final Object charging = Refl.get(sChargingViewField, meter);
                     // The PR's repair, kept under main's predicate. Both sides ask
                     // hidesNativeBolt(); the difference is only how the hand-back is
@@ -855,6 +876,7 @@ final class TrioHooks {
                         }
                         if (self instanceof View) {
                             sStatusBarView = (View) self;
+                            StatusBarTintHooks.rootReady();
                             // The only hook callback that runs early enough on a
                             // real SystemUI context. TrioConfig ignores repeat
                             // calls, so this stays a one-shot.
@@ -886,8 +908,8 @@ final class TrioHooks {
                         // Return the slot before native onDraw can use it. Doing
                         // this afterwards leaves a stale glyph in the first off
                         // or island frame, and clearTint alone loses native tint.
-                        final boolean paint = TrioConfig.get().enabled && !islandHideBattery();
-                        if (self instanceof View && !paint) {
+                        final boolean paint = TrioConfig.appearance().glyph && !islandHideBattery();
+                        if (self instanceof View && (!paint || TrioConfig.get().trioStyle == Prefs.STYLE_HEART)) {
                             GlyphDrawable.uninstall((View) self);
                         }
                         final Object result = chain.proceed();
@@ -910,6 +932,44 @@ final class TrioHooks {
                         if (self instanceof View && canvasArg instanceof Canvas
                                 && paint) {
                             final View host = (View) self;
+                            if (TrioConfig.get().trioStyle == Prefs.STYLE_HEART) {
+                                try {
+                                    TrioState heartState = stateFor(host);
+                                    if (heartState == null) heartState = registerHost(host);
+                                    if (heartState == null) throw new IllegalStateException("battery host unavailable");
+                                    heartState.refresh();
+                                    StatusBarTintHooks.sampleBattery(heartState.level,heartState.charging);
+                                    TrioSettings cfg = TrioConfig.get();
+                                    if (!sHeartFrameLogged) android.util.Log.i(TAG,"Heart frame begin: "
+                                            + host.getClass().getName() + " " + host.getWidth() + "x" + host.getHeight()
+                                            + " level=" + heartState.level + " charging=" + heartState.charging);
+                                    HeartBatteryRenderer.draw((Canvas) canvasArg,host.getWidth(),host.getHeight(),
+                                            heartState.level,heartState.charging,heartState.foreground(),cfg,true,host);
+                                    if (!sHeartFrameLogged) {
+                                        android.util.Log.i(TAG,"Heart frame rendered");
+                                        sHeartFrameLogged=true;
+                                    }
+                                    if (cfg.heartAnimation && heartState.charging && heartState.level < 100
+                                            && host.isAttachedToWindow() && host.isShown()
+                                            && host.getWindowVisibility() == View.VISIBLE
+                                            && android.animation.ValueAnimator.areAnimatorsEnabled()) {
+                                        android.os.PowerManager power=(android.os.PowerManager)host.getContext()
+                                                .getSystemService(android.content.Context.POWER_SERVICE);
+                                        if (power != null && power.isInteractive()) host.postInvalidateDelayed(50L);
+                                    }
+                                } catch (Throwable failure) {
+                                    HeartBattery.failed = true;
+                                    StatusBarTintHooks.requestRefresh();
+                                    android.util.Log.e(TAG,"Heart rendering failed; restoring native battery",failure);
+                                    log(LOG_WARN,"Heart disabled for this SystemUI process: " + failure);
+                                    // Recovery itself must not escape a SystemUI draw callback.
+                                    try { applyConfigChange(); } catch (Throwable recoveryFailure) {
+                                        log(LOG_WARN,"Heart recovery: " + recoveryFailure);
+                                        host.postInvalidate();
+                                    }
+                                }
+                                return result;
+                            }
                             TrioState state = stateFor(host);
                             if (state == null) {
                                 state = registerHost(host);
@@ -987,6 +1047,15 @@ final class TrioHooks {
                         final View view = (View) self;
                         try {
                             final TrioAppearance a = TrioConfig.appearance();
+                            if (a.glyph && a.style == Prefs.STYLE_HEART) {
+                                final int height=view.getMeasuredHeight();
+                                final int width=HeartBatteryLayout.measuredWidth(
+                                        view.getMeasuredWidth(),height,TrioConfig.get());
+                                if (width!=view.getMeasuredWidth() && sSetMeasuredDimension!=null) {
+                                    Refl.invokeArgs(sSetMeasuredDimension,view,new Object[]{width,height});
+                                }
+                                return result;
+                            }
                             if (!a.glyph || !a.capsule) {
                                 return result;
                             }
@@ -1029,7 +1098,7 @@ final class TrioHooks {
                             // A throw out of onMeasure takes the whole layout pass
                             // down, so a failure here leaves MIUI's own measurement
                             // standing instead of propagating.
-                            log(LOG_WARN, "capsule measure failed: " + t);
+                            log(LOG_WARN, "battery icon measure failed: " + t);
                         }
                         return result;
                     }
@@ -1561,7 +1630,7 @@ final class TrioHooks {
         // so the bar keeps the glyph exactly where it was. The island window
         // and its clearance stay MIUI's - only the meter's participation moves.
         final Object result = chain.proceed(new Object[] {
-                Boolean.valueOf(requested && !TrioConfig.get().enabled),
+                Boolean.valueOf(requested && !TrioConfig.appearance().glyph),
                 Boolean.valueOf(trigger)});
         final Object meter = chain.getThisObject();
         Refl.set(Refl.field(meter.getClass(), "mStoreIsAddBatteryIsland"), meter,
@@ -2400,7 +2469,7 @@ final class TrioHooks {
     }
 
     private static void settle(ViewGroup container) {
-        if (!TrioConfig.get().enabled) {
+        if (!TrioConfig.appearance().glyph) {
             return;
         }
         ensureFolded(container);
@@ -5148,6 +5217,7 @@ final class TrioHooks {
     }
 
     private static void log(XposedModule module, String msg) {
+        try { android.util.Log.i(TAG,msg); } catch (Throwable ignored) { }
         try {
             module.log(LOG_INFO, TAG, msg);
         } catch (Throwable ignored) {
@@ -5161,6 +5231,7 @@ final class TrioHooks {
      * module instance along.
      */
     static void log(int priority, String msg) {
+        try { android.util.Log.println(priority,TAG,msg); } catch (Throwable ignored) { }
         final XposedModule module = sModule;
         if (module == null) {
             return;

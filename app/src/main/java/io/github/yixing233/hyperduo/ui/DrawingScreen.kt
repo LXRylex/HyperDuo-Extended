@@ -340,6 +340,7 @@ private fun DrawingEditorCard(
                     update { it.setTrioStyle(style) }
                 },
             )
+            if (settings.trioStyle == Prefs.STYLE_HEART) HeartControls(settings, update)
             Text(
                 text = stringResource(R.string.drawing_state_title),
                 style = MiuixTheme.textStyles.subtitle,
@@ -732,8 +733,8 @@ private fun DrawingStyleSelector(
     settings: TrioSettings, scene: PreviewScene, dark: Boolean,
     snapshotForStyle: (Int) -> TrioSettings, onSelect: (Int) -> Unit,
 ) {
-    val styles = listOf(Prefs.STYLE_RING, Prefs.STYLE_CAPSULE)
-    val labels = listOf(R.string.trio_style_ring, R.string.trio_style_capsule)
+    val styles = listOf(Prefs.STYLE_RING, Prefs.STYLE_CAPSULE, Prefs.STYLE_HEART, Prefs.STYLE_DEFAULT)
+    val labels = listOf(R.string.trio_style_ring, R.string.trio_style_capsule, R.string.trio_style_heart, R.string.trio_style_default)
     Row(Modifier.fillMaxWidth().padding(bottom = 18.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         styles.forEachIndexed { index, style ->
             val chosen = settings.trioStyle == style

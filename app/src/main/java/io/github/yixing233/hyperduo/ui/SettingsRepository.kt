@@ -68,6 +68,16 @@ class SettingsRepository(context: Context) {
 
     // ------------------------------------------------------------- appearance
 
+    fun setHeartNormal(value: Int) = writeInt(Prefs.KEY_HEART_NORMAL, value)
+    fun setHeartCharging(value: Int) = writeInt(Prefs.KEY_HEART_CHARGING, value)
+    fun setHeartLow(value: Int) = writeInt(Prefs.KEY_HEART_LOW, value)
+    fun setHeartFull(value: Int) = writeInt(Prefs.KEY_HEART_FULL, value)
+    fun setHeartPercentage(value: Boolean) = writeBoolean(Prefs.KEY_HEART_PERCENTAGE, value)
+    fun setHeartPercentageRight(value: Boolean) = writeBoolean(Prefs.KEY_HEART_PERCENTAGE_RIGHT, value)
+    fun setHeartStatusTint(value: Boolean) = writeBoolean(Prefs.KEY_HEART_STATUS_TINT, value)
+    fun setHeartAnimation(value: Boolean) = writeBoolean(Prefs.KEY_HEART_ANIMATION, value)
+    fun setHeartAutoTint(value: Boolean) = writeBoolean(Prefs.KEY_HEART_AUTO_TINT, value)
+
     fun setEnabled(value: Boolean) = writeBoolean(Prefs.KEY_ENABLED, value)
     fun setShowWifi(value: Boolean) = writeStyled(style(), Prefs.KEY_SHOW_WIFI) { e, k ->
         e.putBoolean(k, value) }
@@ -420,6 +430,16 @@ class SettingsRepository(context: Context) {
             prefs.putInt(Prefs.KEY_PERF_SCALE, snapshot.perfScale)
             prefs.putInt(Prefs.KEY_PERF_WEIGHT, snapshot.perfWeight)
             prefs.putInt(Prefs.KEY_GLYPH_SCALE, snapshot.glyphScale)
+            prefs.putInt(Prefs.KEY_HEART_NORMAL, snapshot.heartNormal)
+            prefs.putInt(Prefs.KEY_HEART_CHARGING, snapshot.heartCharging)
+            prefs.putInt(Prefs.KEY_HEART_LOW, snapshot.heartLow)
+            prefs.putInt(Prefs.KEY_HEART_FULL, snapshot.heartFull)
+            prefs.putBoolean(Prefs.KEY_HEART_PERCENTAGE, snapshot.heartPercentage)
+            prefs.putBoolean(Prefs.KEY_HEART_PERCENTAGE_RIGHT, snapshot.heartPercentageRight)
+            prefs.putBoolean(Prefs.KEY_HEART_STATUS_TINT, snapshot.heartStatusTint)
+            prefs.putBoolean(Prefs.KEY_HEART_ANIMATION, snapshot.heartAnimation)
+            prefs.putBoolean(Prefs.KEY_HEART_AUTO_TINT, snapshot.heartAutoTint)
+
             // A key missing from this list is re-pushed as its default after every
             // framework reconnect, so a chosen font would silently revert on the
             // next bind. This is the list DEVELOPMENT.md calls out for exactly that

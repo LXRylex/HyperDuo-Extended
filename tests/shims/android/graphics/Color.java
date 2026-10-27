@@ -13,6 +13,7 @@ package android.graphics;
 /** Minimal desktop stand-in for {@code android.graphics.Color}. */
 public class Color {
 
+    public static final int TRANSPARENT = 0;
     public static final int BLACK = 0xFF000000;
     public static final int WHITE = 0xFFFFFFFF;
 

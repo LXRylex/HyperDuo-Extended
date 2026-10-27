@@ -1,5 +1,12 @@
 pluginManagement {
     repositories {
+        // Optional Google Maven fallback for networks where dl.google.com returns 404.
+        // Restricted to AndroidX; upstream dependency versions remain unchanged.
+        if (providers.gradleProperty("heartMavenMirror").orNull == "true") {
+            maven("https://repo.huaweicloud.com/repository/maven") {
+                content { includeGroupByRegex("androidx\\..*") }
+            }
+        }
         google()
         mavenCentral()
         gradlePluginPortal()
@@ -17,6 +24,13 @@ dependencyResolutionManagement {
             metadataSources {
                 mavenPom()
                 artifact()
+            }
+        }
+        // Optional Google Maven fallback for networks where dl.google.com returns 404.
+        // Restricted to AndroidX; upstream dependency versions remain unchanged.
+        if (providers.gradleProperty("heartMavenMirror").orNull == "true") {
+            maven("https://repo.huaweicloud.com/repository/maven") {
+                content { includeGroupByRegex("androidx\\..*") }
             }
         }
         google()

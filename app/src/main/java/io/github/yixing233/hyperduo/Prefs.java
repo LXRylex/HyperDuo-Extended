@@ -1247,10 +1247,32 @@ public final class Prefs {
      * containing a gauge.
      */
     public static final int STYLE_CAPSULE = 2;
+    public static final int STYLE_HEART = 3;
+    public static final int STYLE_DEFAULT = 4;
+    public static final String KEY_HEART_NORMAL = "heartNormal";
+    public static final int DEF_HEART_NORMAL = 0xFFFF6B9D;
+    public static final String KEY_HEART_CHARGING = "heartCharging";
+    public static final int DEF_HEART_CHARGING = 0xFF4CD9A0;
+    public static final String KEY_HEART_LOW = "heartLow";
+    public static final int DEF_HEART_LOW = 0xFFFF4B55;
+    public static final String KEY_HEART_FULL = "heartFull";
+    public static final int DEF_HEART_FULL = 0xFF59CC78;
+    public static final String KEY_HEART_PERCENTAGE = "heartPercentage";
+    public static final boolean DEF_HEART_PERCENTAGE = false;
+    public static final String KEY_HEART_PERCENTAGE_RIGHT = "heartPercentageRight";
+    public static final boolean DEF_HEART_PERCENTAGE_RIGHT = false;
+    public static final String KEY_HEART_STATUS_TINT = "heartStatusTint";
+    public static final boolean DEF_HEART_STATUS_TINT = true;
+    public static final String KEY_HEART_ANIMATION = "heartAnimation";
+    public static final boolean DEF_HEART_ANIMATION = false;
+    public static final String KEY_HEART_AUTO_TINT = "heartAutoTint";
+    public static final boolean DEF_HEART_AUTO_TINT = true;
+
 
     /** Keep capsule's stored ID; retired rectangular configurations return to the ring. */
     public static int normalizeTrioStyle(int style) {
-        return style == STYLE_CAPSULE ? STYLE_CAPSULE : STYLE_RING;
+        return style == STYLE_HEART || style == STYLE_DEFAULT ? style
+                : style == STYLE_CAPSULE ? STYLE_CAPSULE : STYLE_RING;
     }
     /**
      * The ring, for every install that has never chosen.
@@ -1786,7 +1808,7 @@ public final class Prefs {
     public static final int MAX_MOBILE_TYPE_MODE = MOBILE_TYPE_OUT_RING;
 
     public static final int MIN_TRIO_STYLE = STYLE_RING;
-    public static final int MAX_TRIO_STYLE = STYLE_CAPSULE;
+    public static final int MAX_TRIO_STYLE = STYLE_DEFAULT;
 
     public static final int MIN_SIGNAL_MODE = SIGNAL_IN_RING;
     public static final int MAX_SIGNAL_MODE = SIGNAL_OUT_RING;

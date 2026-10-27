@@ -106,7 +106,8 @@ internal fun ContentControlRow(
     val a = TrioAppearance.of(settings)
     val master = listOf(a.glyph to R.string.master_title)
     val positioned = when (control) {
-        ContentControl.Value -> TrioZones.Part.VALUE
+        ContentControl.Value -> TrioZones.Part.VALUE
+
         // Not a position row: it is a lens over the centre, not a place for the number.
         ContentControl.ChargingShowsValue -> null
         ContentControl.Bolt -> TrioZones.Part.BOLT
@@ -149,10 +150,10 @@ internal fun ContentControlRow(
         ContentControl.Enabled -> ContentToggle(settings.enabled, R.string.master_title,
             null, emptyList()) { value -> update { it.setEnabled(value) } }
         ContentControl.Style -> {
-            val styles = listOf(Prefs.STYLE_RING, Prefs.STYLE_CAPSULE)
+            val styles = listOf(Prefs.STYLE_RING, Prefs.STYLE_CAPSULE, Prefs.STYLE_HEART, Prefs.STYLE_DEFAULT)
             ContentChoice(styles.indexOf(a.style).coerceAtLeast(0), R.string.trio_style_title,
                 null,
-                listOf(R.string.trio_style_ring, R.string.trio_style_capsule),
+                listOf(R.string.trio_style_ring, R.string.trio_style_capsule, R.string.trio_style_heart, R.string.trio_style_default),
                 master) { index -> update { it.setTrioStyle(styles[index]) } }
         }
         ContentControl.Wifi -> Unit // Handled above by WifiPositionControl, which returns.

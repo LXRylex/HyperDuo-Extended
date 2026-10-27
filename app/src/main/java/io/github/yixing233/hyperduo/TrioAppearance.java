@@ -149,7 +149,8 @@ public final class TrioAppearance {
      */
     public final boolean perfPower;
     /** The battery temperature is drawn in the same out-of-ring strip. */
-    public final boolean perfTemp;
+    public final boolean perfTemp;
+
     /** Drops the temperature unless a charger is attached; see {@link Prefs#KEY_PERF_TEMP_CHARGING_ONLY}. */
     public final boolean perfTempChargingOnly;
     /**
@@ -275,14 +276,15 @@ public final class TrioAppearance {
         capsuleRightDy = c.capsuleRightDy;
         capsuleLength = c.capsuleLength;
         ring = c.trioStyle == Prefs.STYLE_RING;
-        slotted = !rect;
+        slotted = ring || capsule;
         ringZones = TrioSettings.copyZones(c.ringZones);
 
-        glyph = c.enabled;
-        wifi = c.showWifi;
-        mobile = c.showMobile;
-        signalOutOfRing = c.signalMode == Prefs.SIGNAL_OUT_RING;
-        stackedSignal = c.stackedSignal;
+        final boolean heart = c.trioStyle == Prefs.STYLE_HEART;
+        glyph = c.enabled && c.trioStyle != Prefs.STYLE_DEFAULT && (!heart || !HeartBattery.failed);
+        wifi = c.showWifi && c.trioStyle != Prefs.STYLE_HEART;
+        mobile = c.showMobile && c.trioStyle != Prefs.STYLE_HEART;
+        signalOutOfRing = !heart && c.signalMode == Prefs.SIGNAL_OUT_RING;
+        stackedSignal = !heart && c.stackedSignal;
         dualSim = c.dualSim;
         showSim1 = c.showSim1;
         showSim2 = c.showSim2;
@@ -294,13 +296,14 @@ public final class TrioAppearance {
         boltWanted = true;
         centreValue = c.valueCentred && ring;
         typeMode = c.mobileTypeMode;
-        typeInRing = c.mobileTypeMode == Prefs.MOBILE_TYPE_IN_RING;
-        typeOutOfRing = c.mobileTypeMode == Prefs.MOBILE_TYPE_OUT_RING;
+        typeInRing = !heart && c.mobileTypeMode == Prefs.MOBILE_TYPE_IN_RING;
+        typeOutOfRing = !heart && c.mobileTypeMode == Prefs.MOBILE_TYPE_OUT_RING;
         typeHideOnWifi = c.typeHideOnWifi;
         chargingShowsValue = c.chargingShowsValue;
         fontPath = c.fontPath == null ? "" : c.fontPath;
-        perfPower = c.perfPower;
-        perfTemp = c.perfTemp;
+        perfPower = !heart && c.perfPower;
+        perfTemp = !heart && c.perfTemp;
+
         perfTempChargingOnly = c.perfTempChargingOnly;
         perfScale = c.perfScale;
         perfWeight = c.perfWeight;
@@ -469,7 +472,7 @@ public final class TrioAppearance {
      * exactly while this module is on <em>and</em> draws one of its own.
      */
     public boolean hidesNativeBolt() {
-        return glyph && drawsBolt();
+        return glyph && (style == Prefs.STYLE_HEART || drawsBolt());
     }
 
     /** Whether the Wi-Fi arcs carry ink at this signal level. */

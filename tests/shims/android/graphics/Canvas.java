@@ -28,6 +28,15 @@ public class Canvas {
     private final Graphics2D g;
     private final Deque<AffineTransform> stack = new ArrayDeque<>();
 
+    private final Deque<java.awt.Shape> clips = new java.util.LinkedList<>();
+    public Canvas(Bitmap bitmap) { this(bitmap.image.createGraphics()); }
+    public void clipPath(Path path) { g.clip(path.delegate); }
+    public void drawRect(float l,float t,float r,float b,Paint p) {
+        apply(p,new java.awt.geom.Rectangle2D.Float(l,t,r-l,b-t));
+    }
+    public void drawBitmap(Bitmap bitmap,float x,float y,Paint paint) {
+        g.drawImage(bitmap.image,java.awt.geom.AffineTransform.getTranslateInstance(x,y),null);
+    }
     public Canvas(Graphics2D g) {
         this.g = g;
         this.g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -47,12 +56,14 @@ public class Canvas {
      */
     public int save() {
         stack.push(g.getTransform());
+        clips.push(g.getClip());
         return stack.size() - 1;
     }
 
     public void restoreToCount(int count) {
         while (stack.size() > count) {
             g.setTransform(stack.pop());
+            g.setClip(clips.pop());
         }
     }
 

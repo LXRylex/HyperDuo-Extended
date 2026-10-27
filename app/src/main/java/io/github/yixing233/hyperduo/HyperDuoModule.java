@@ -35,6 +35,11 @@ public final class HyperDuoModule extends XposedModule {
         if (!TARGET_PACKAGE.equals(pkg)) {
             return;
         }
+        if (android.os.Build.VERSION.SDK_INT < 33 || android.os.Build.VERSION.SDK_INT > 37) {
+            log(LOG_WARN,"Unsupported Android SDK; no hooks installed");
+            return;
+        }
+        android.util.Log.i(TAG,"Heart module package ready " + pkg);
         try {
             TrioHooks.install(this, param.getClassLoader());
         } catch (Throwable t) {

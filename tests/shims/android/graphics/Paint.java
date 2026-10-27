@@ -64,6 +64,9 @@ public class Paint {
     public void setTextAlign(Align a) { align = a; }
     public Align getTextAlign() { return align; }
 
+    public void setAlpha(int alpha) { color=(color&0xffffff)|(alpha<<24); }
+    public float ascent() { return -getFontMetrics().ascent; }
+    public float descent() { return getFontMetrics().descent; }
     public void setColor(int c) { color = c; }
     public int getColor() { return color; }
 

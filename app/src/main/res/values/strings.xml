@@ -322,4 +322,6 @@
     <string name="font_applied">已应用字体 %1$s</string>
     <string name="font_not_a_font">这个文件不是字体（只支持 .ttf / .otf），已忽略</string>
     <string name="font_failed">字体安装失败，请重试</string>
+    <string name="trio_style_heart">Heart</string>
+    <string name="trio_style_default">Default</string>
 </resources>
