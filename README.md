@@ -14,7 +14,7 @@ Tested on a Redmi Note 13 Pro 4G (emerald), HyperOS `OS3.0.305.0.WNFMIXM`, Andro
   <tr>
     <td valign="top" width="50%">
       <!-- Your Static Image (Shorter height, full width, no distortion) -->
-      <img src="https://github.com/user-attachments/assets/ffb3f88d-735d-499b-a53c-97f44f3d9006" width="90%" style="height: 1280px; object-fit: cover;" alt="image" />
+      <img src="https://github.com/user-attachments/assets/ffb3f88d-735d-499b-a53c-97f44f3d9006" width="90%" style="height: 950px; object-fit: cover;" alt="image" />
     </td>
     <td valign="top" width="50%">
       <!-- Your Animated GIF -->
