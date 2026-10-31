@@ -4,7 +4,7 @@ A modified fork of [HyperDuo](https://github.com/yixing233/HyperDuo) with a hear
 
 ## Download and use
 
-Install the latest [heart.8 APK](https://github.com/LXRylex/HyperDuo-Extended/releases/tag/v1.7.4-heart.8); its [SHA-256 checksum](release/SHA256SUMS.txt) is included. Enable the module in a compatible modern LSPosed/Vector loader and scope it to `com.android.systemui`. Open HyperDuo, enable it, and select **Heart** under Drawing. Restart SystemUI using your module manager if needed.
+Install the latest [heart.21 APK](https://github.com/LXRylex/HyperLock-Extended/releases/tag/v1.7.4-heart.21); its [SHA-256 checksum](release/SHA256SUMS.txt) is included. Enable the module in a compatible modern LSPosed/Vector loader and scope it to `com.android.systemui`. Open HyperDuo, enable it, and select **Heart** under Drawing. Restart SystemUI using your module manager if needed.
 
 The heart fills from the bottom according to battery level. Settings include normal, charging, low and full colors; a charging wave; percentage inside or beside the heart; automatic outline tint; and matching status-bar and HyperOS shade header colors. Default, Ring and Capsule styles are retained.
 
